@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% set player = profile.player %}
+{% set rankings = profile.rankings %}
+{% set average = profile.position_average %}
+{% set recommendation = profile.recommendation %}
+
+{% block title %}{{ player.name }} Fantasy Allsvenskan - pris, form och värdeindex{% endblock %}
+{% block meta_description %}Se Fantasy Allsvenskan-statistik för {{ player.name }} i {{ player.team }}: pris, form, speltid, ranking, prognos, risk och värdeindex inför nästa omgång.{% endblock %}
+{% block canonical %}{{ url_for('player_detail', slug=player.slug, _external=True) }}{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": {{ player.name|tojson }},
+    "affiliation": {{ player.team|tojson }},
+    "jobTitle": {{ player.position|tojson }},
+    "url": "{{ url_for('player_detail', slug=player.slug, _external=True) }}"
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<section class="detail-hero player-hero">
+    <div>
+        <p class="eyebrow">{{ player.team }} · {{ player.position }}</p>
+        <h1>{{ player.name }}</h1>
+        <p>
+            Fantasyprofil med ranking, värdeindex, prognos, nästa match och jämförelse mot
+            andra {{ player.position|lower }}ar.
+        </p>
+    </div>
+    <aside class="recommendation-card {{ recommendation.tone }}">
+        <span>Rekommendation</span>
+        <strong>{{ recommendation.label }}</strong>
+        <small>{{ recommendation.reason }}</small>
+        <em>{{ recommendation.action }}</em>
+    </aside>
+</section>
+
+<section class="quick-guide player-decision-guide" aria-label="Snabb bedömning av {{ player.name }}">
+    <div>
+        <span>Beslut</span>
+        <strong>{{ player.decision_summary }}</strong>
+        <p>{{ recommendation.confidence }} · {{ player.value_label }}</p>
+    </div>
+    <div>
+        <span>Prognos</span>
+        <strong>{{ player.projection_label }}</strong>
+        <p>{{ player.expected_points }} förväntade poäng som jämförelsesiffra inför nästa match.</p>
+    </div>
+    <div>
+        <span>Speltid</span>
+        <strong>{{ player.minutes_label }}</strong>
+        <p>{{ player.minutes }} minuter hittills. Tryggare minuter ger säkrare fantasybeslut.</p>
+    </div>
+    <div>
+        <span>Risk</span>
+        <strong>{{ player.risk_label }}</strong>
+        <p>Risk bygger på status, nyheter, spelbarhet och osäker roll.</p>
+    </div>
+</section>
+
+<section class="stat-grid">
+    <div class="metric">
+        <span>Värdeindex</span>
+        <strong>{{ player.value_score }}</strong>
+        <small>{{ player.value_label }}</small>
+    </div>
+    <div class="metric">
+        <span>Prognos</span>
+        <strong>{{ player.expected_points }}</strong>
+        <small>{{ player.projection_label }}</small>
+    </div>
+    <div class="metric">
+        <span>Pris</span>
+        <strong>{{ player.price }}M</strong>
+    </div>
+    <div class="metric">
+        <span>Form</span>
+        <strong>{{ player.form }}</strong>
+    </div>
+    <div class="metric">
+        <span>Speltid</span>
+        <strong>{{ player.minutes }}</strong>
+        <small>{{ player.minutes_label }}</small>
+    </div>
+    <div class="metric">
+        <span>Ägd av</span>
+        <strong>{{ player.selected_by_percent }}%</strong>
+    </div>
+</section>
+
+<section class="player-layout">
+    <div class="player-main">
+        <article class="panel">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Bedömning</p>
+                    <h2>Fantasyanalys</h2>
+                </div>
+            </div>
+            <div class="analysis-copy">
+                <p>
+                    {{ player.name }} är rankad <strong>#{{ rankings.overall }}</strong> av
+                    {{ rankings.overall_count }} spelare totalt, <strong>#{{ rankings.team }}</strong>
+                    i {{ player.team }} och <strong>#{{ rankings.position }}</strong> av
+                    {{ rankings.position_count }} {{ player.position|lower }}ar.
+                </p>
+                <p>
+                    Spelaren har värdeindex <strong>{{ player.value_score }}</strong> och prognos
+                    <strong>{{ player.expected_points }}</strong>. Rekommendationen är
+                    <strong>{{ recommendation.label }}</strong>: {{ recommendation.reason }}
+                </p>
+                <p>
+                    På vanlig svenska betyder det: <strong>{{ player.decision_summary }}</strong>.
+                    Värdeindexet är en jämförelsesiffra, medan prognosen främst används för att jämföra
+                    spelare inför nästa omgång.
+                </p>
+                {% if player.news %}
+                <p><strong>Nyhet/status:</strong> {{ player.news }}</p>
+                {% endif %}
+            </div>
+        </article>
+
+        <article class="panel">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Nästa</p>
+                    <h2>Nästa match</h2>
+                </div>
+            </div>
+            {% if player.next_fixture %}
+            <div class="match-card">
+                <div>
+                    <span>{{ "Hemma" if player.next_fixture.venue == "H" else "Borta" }}</span>
+                    <strong>{{ player.next_fixture.opponent }}</strong>
+                    <small>{{ player.next_fixture.difficulty.label }} match</small>
+                </div>
+                <div class="match-impact {{ recommendation.tone }}">
+                    <span>Nästa match</span>
+                    <strong>
+                        {{ player.fixture_impact.label }}
+                    </strong>
+                    <small>
+                        {% if player.fixture_impact.percent > 0 %}+{% endif %}{{ player.fixture_impact.percent }}% på prognosen
+                    </small>
+                </div>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <strong>Ingen kommande match</strong>
+                <span>Det finns ingen framtida fixture i datan just nu.</span>
+            </div>
+            {% endif %}
+        </article>
+
+        <article class="panel">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Jämförelse</p>
+                    <h2>Mot positionssnittet</h2>
+                </div>
+            </div>
+            <div class="comparison-grid">
+                <div>
+                    <span>Pris</span>
+                    <strong>{{ player.price }}M</strong>
+                    <small>Snitt: {{ average.price }}M</small>
+                </div>
+                <div>
+                    <span>Form</span>
+                    <strong>{{ player.form }}</strong>
+                    <small>Snitt: {{ average.form }}</small>
+                </div>
+                <div>
+                    <span>Prognos</span>
+                    <strong>{{ player.expected_points }}</strong>
+                    <small>Snitt: {{ average.expected_points }}</small>
+                </div>
+                <div>
+                    <span>Index</span>
+                    <strong>{{ player.value_score }}</strong>
+                    <small>Snitt: {{ average.value_score }}</small>
+                </div>
+            </div>
+        </article>
+
+        <article class="panel wide">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Alternativ</p>
+                    <h2>Liknande spelare</h2>
+                </div>
+            </div>
+            <div class="section-copy">
+                <p>
+                    Jämför alltid med liknande spelare i samma position och prisklass.
+                    Ett högre index är intressant, men roll, risk och nästa match kan avgöra.
+                </p>
+            </div>
+            {% set table_players = profile.similar %}
+            {% set table_variant = "compact" %}
+            {% include "partials/player_table.html" %}
+        </article>
+    </div>
+
+    <aside class="player-sidebar">
+        <article class="panel">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Ranking</p>
+                    <h2>Placeringar</h2>
+                </div>
+            </div>
+            <dl class="score-breakdown">
+                <div>
+                    <dt>Totalt</dt>
+                    <dd>#{{ rankings.overall }} / {{ rankings.overall_count }}</dd>
+                </div>
+                <div>
+                    <dt>I laget</dt>
+                    <dd>#{{ rankings.team }} / {{ rankings.team_count }}</dd>
+                </div>
+                <div>
+                    <dt>Position</dt>
+                    <dd>#{{ rankings.position }} / {{ rankings.position_count }}</dd>
+                </div>
+            </dl>
+        </article>
+
+        <article class="panel">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Modell</p>
+                    <h2>Så läser du signalerna</h2>
+                </div>
+            </div>
+            <dl class="score-breakdown">
+                <div>
+                    <dt>Speltid</dt>
+                    <dd>{{ player.minutes_label }}</dd>
+                </div>
+                <div>
+                    <dt>Spelbarhet</dt>
+                    <dd>{{ "Tillgänglig" if player.availability_score >= 4 else "Kontrollera" }}</dd>
+                </div>
+                <div>
+                    <dt>Marknad</dt>
+                    <dd>{{ "Köps av många" if player.market_score >= 3 else "Lugn marknad" }}</dd>
+                </div>
+                <div>
+                    <dt>Risk</dt>
+                    <dd>{{ player.risk_label }}</dd>
+                </div>
+            </dl>
+            <a class="button secondary dark full" href="{{ url_for('methodology') }}">Läs metodiken</a>
+        </article>
+
+        {% if profile.category_links %}
+        <article class="panel">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Tipslistor</p>
+                    <h2>Passar i</h2>
+                </div>
+            </div>
+            <div class="stack-list">
+                {% for link in profile.category_links %}
+                <a class="stack-item" href="{{ url_for('tips_category', category=link.slug) }}">
+                    <span>
+                        <strong>{{ link.label }}</strong>
+                        <small>{{ link.reason }}</small>
+                    </span>
+                    <b><small>Visa</small>Lista</b>
+                </a>
+                {% endfor %}
+            </div>
+        </article>
+        {% endif %}
+
+        <article class="panel">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Lag</p>
+                    <h2>{{ player.team }}</h2>
+                </div>
+                <a href="{{ url_for('team_detail', slug=player.team_slug) }}">Lagsida</a>
+            </div>
+            <div class="stack-list">
+                {% for teammate in profile.teammates[:6] %}
+                <a class="stack-item" href="{{ url_for('player_detail', slug=teammate.slug) }}">
+                    <span>
+                        <strong>{{ teammate.name }}</strong>
+                        <small>{{ teammate.position }} · {{ teammate.price }}M</small>
+                    </span>
+                    <b><small>Index</small>{{ teammate.value_score }}</b>
+                </a>
+                {% endfor %}
+            </div>
+        </article>
+    </aside>
+</section>
+{% endblock %}

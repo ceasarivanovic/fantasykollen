@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Fantasykollen{% endblock %}
+{% block meta_description %}{{ description }} Fantasykollen visar form, prognos, värdeindex, speltid och risk inför nästa omgång.{% endblock %}
+{% block canonical %}{{ canonical_url }}{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": {{ heading|tojson }},
+    "itemListElement": [
+        {% for player in players[:12] %}
+        {
+            "@type": "ListItem",
+            "position": {{ loop.index }},
+            "name": {{ player.name|tojson }},
+            "url": "{{ url_for('player_detail', slug=player.slug, _external=True) }}"
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <p class="eyebrow">{{ eyebrow }}</p>
+    <h1>{{ heading }}</h1>
+    <p>{{ description }} Listan uppdateras automatiskt när ny fantasydata hämtas.</p>
+    <div class="meta-strip">
+        <span>{{ data.event.name }}</span>
+        <span>Deadline: {{ data.event.deadline or "Ej publicerad" }}</span>
+        <a href="{{ url_for('gameweek', event_id=data.event.id) }}">Inför omgången</a>
+        <a href="{{ url_for('players') }}">Alla spelare</a>
+    </div>
+</section>
+
+<section class="tips-guide">
+    <div class="tips-guide-copy">
+        <p class="eyebrow">Guide</p>
+        <h2>Så använder du listan</h2>
+        <p>
+            Börja med spelare som kombinerar starkt värdeindex, trygg speltid och låg risk.
+            Prognosen hjälper dig jämföra kortsiktig poängpotential, medan värdeindex är bättre
+            för att hitta prisvärda val.
+        </p>
+        <p>
+            Kontrollera alltid lagnyheter, skador och deadline innan du gör byten.
+        </p>
+    </div>
+    <aside class="tips-guide-side">
+        <span>Spelare</span>
+        <strong>{{ players|length }}</strong>
+        <p>Aktuella kandidater på sidan.</p>
+    </aside>
+</section>
+
+<section class="panel tips-table">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Ranking</p>
+            <h2>{{ heading }}</h2>
+        </div>
+        <a href="{{ url_for('methodology') }}">Så fungerar modellen</a>
+    </div>
+    {% set table_players = players %}
+    {% set table_variant = "compact" %}
+    {% include "partials/player_table.html" %}
+</section>
+
+<section class="seo-intro">
+    <h2>Fler Fantasy Allsvenskan tips</h2>
+    <p>
+        Fantasykollen samlar budgetfynd, kaptenskandidater, differentials och spelarprofiler
+        inför varje omgång. Använd flera listor tillsammans för att hitta rätt balans mellan
+        uppsida och risk.
+    </p>
+    <div class="article-link-grid">
+        <a href="{{ url_for('tips_category', category='budgetfynd') }}">Budgetfynd</a>
+        <a href="{{ url_for('tips_category', category='kaptener') }}">Kaptener</a>
+        <a href="{{ url_for('tips_category', category='differentials') }}">Differentials</a>
+        <a href="{{ url_for('fantasy') }}">Fantasycenter</a>
+    </div>
+</section>
+{% endblock %}

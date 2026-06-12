@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Allsvenskan tabell, statistik och fantasydata - Fantasykollen{% endblock %}
+{% block meta_description %}Se Allsvenskans tabell, poängställning och fantasydata med lagens form, fantasy-poäng och spelarvärde inför kommande omgångar.{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <p class="eyebrow">Liga</p>
+    <h1>Allsvenskan tabell och fantasydata</h1>
+    <p>Poängställning baserad på spelade matcher, plus fantasydata för lagens truppform och spelarvärde.</p>
+</section>
+
+<section class="panel league-table-panel" aria-label="Allsvenskan tabell">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Poängställning</p>
+            <h2>Allsvenskan tabell</h2>
+        </div>
+        <span class="muted">{{ league_table|length }} lag</span>
+    </div>
+    <div class="league-table-wrap">
+        <table class="league-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Lag</th>
+                    <th>S</th>
+                    <th>V</th>
+                    <th>O</th>
+                    <th>F</th>
+                    <th>GM</th>
+                    <th>IM</th>
+                    <th>MS</th>
+                    <th>P</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for team in league_table %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td><a class="table-link" href="{{ url_for('team_detail', slug=team.slug) }}"><strong>{{ team.name }}</strong></a></td>
+                    <td>{{ team.played }}</td>
+                    <td>{{ team.wins }}</td>
+                    <td>{{ team.draws }}</td>
+                    <td>{{ team.losses }}</td>
+                    <td>{{ team.goals_for }}</td>
+                    <td>{{ team.goals_against }}</td>
+                    <td>{{ "%+d"|format(team.goal_difference) }}</td>
+                    <td class="score">{{ team.points }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="section-heading league-subheading">
+    <div>
+        <p class="eyebrow">Fantasy</p>
+        <h2>Lagdata för Fantasy Allsvenskan</h2>
+    </div>
+</section>
+
+<section class="team-grid" aria-label="Allsvenska lag i fantasydata">
+    {% for team in fixture_strength %}
+    <article class="team-card">
+        <div>
+            <span class="team-code">{{ team.short_name }}</span>
+            <h2><a href="{{ url_for('team_detail', slug=team.slug) }}">{{ team.name }}</a></h2>
+        </div>
+        <dl>
+            <div>
+                <dt>Fantasy-poäng</dt>
+                <dd>{{ team.fantasy_points }}</dd>
+            </div>
+            <div>
+                <dt>Truppform</dt>
+                <dd>{{ team.squad_form }}</dd>
+            </div>
+        </dl>
+    </article>
+    {% endfor %}
+</section>
+{% endblock %}

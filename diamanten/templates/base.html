@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Fantasykollen - fantasytips och spelarvärde{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Fantasykollen analyserar fantasyfotboll med form, speltid, risk och spelarvärde inför varje omgång.{% endblock %}">
+    <meta name="robots" content="{% block robots %}index,follow{% endblock %}">
+    <link rel="canonical" href="{% block canonical %}{{ request.base_url }}{% endblock %}">
+    <meta name="theme-color" content="#0f8a64">
+
+    <meta property="og:site_name" content="Fantasykollen">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{% block og_title %}{{ self.title()|striptags }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ self.meta_description()|striptags }}{% endblock %}">
+    <meta property="og:url" content="{{ request.base_url }}">
+    <meta property="og:image" content="{% block og_image %}https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=1200&h=630&q=80{% endblock %}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ self.og_title()|striptags }}">
+    <meta name="twitter:description" content="{{ self.og_description()|striptags }}">
+    <meta name="twitter:image" content="{{ self.og_image()|striptags }}">
+    {% if plausible_domain %}
+    <script defer data-domain="{{ plausible_domain }}" src="https://plausible.io/js/script.js"></script>
+    {% endif %}
+    {% if ga_measurement_id %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ ga_measurement_id }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag("js", new Date());
+        gtag("config", "{{ ga_measurement_id }}");
+    </script>
+    {% endif %}
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Fantasykollen",
+        "url": "{{ url_for('home', _external=True) }}",
+        "inLanguage": "sv-SE",
+        "description": "Fantasyverktyg med spelarvärde, form, speltid och risk inför varje omgång.",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "{{ url_for('players', _external=True) }}?team={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+    {% block structured_data %}{% endblock %}
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="{{ url_for('home') }}" aria-label="Fantasykollen startsida">
+            <span class="brand-mark"></span>
+            <span>Fantasykollen</span>
+        </a>
+        <nav class="nav" aria-label="Huvudnavigering">
+            <details class="league-switcher">
+                <summary>{{ active_league.short_name }}</summary>
+                <div class="league-menu">
+                    {% for league in available_leagues %}
+                    {% if league.status == "active" %}
+                    <a class="league-option active" href="{{ url_for('home') }}">
+                        <span>{{ league.short_name }}</span>
+                        <small>Aktiv</small>
+                    </a>
+                    {% else %}
+                    <span class="league-option disabled" aria-disabled="true">
+                        <span>{{ league.short_name }}</span>
+                        <small>Kommer</small>
+                    </span>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </details>
+            <a class="nav-link {% if request.endpoint == 'home' %}active{% endif %}" href="{{ url_for('home') }}">Översikt</a>
+            <a class="nav-link {% if request.endpoint == 'allsvenskan' %}active{% endif %}" href="{{ url_for('allsvenskan') }}">Allsvenskan</a>
+            <a class="nav-link {% if request.endpoint in ['fantasy', 'gameweek'] %}active{% endif %}" href="{{ url_for('fantasy') }}">Fantasy</a>
+            <details class="nav-menu {% if request.endpoint == 'tips_category' %}active{% endif %}">
+                <summary>Tips</summary>
+                <div class="nav-menu-list">
+                    <a href="{{ url_for('current_gameweek') }}">Inför omgången</a>
+                    <a href="{{ url_for('tips_category', category='budgetfynd') }}">Budgetfynd</a>
+                    <a href="{{ url_for('tips_category', category='kaptener') }}">Kaptener</a>
+                    <a href="{{ url_for('tips_category', category='differentials') }}">Differentials</a>
+                </div>
+            </details>
+            <a class="nav-link {% if request.endpoint in ['players', 'player_detail'] %}active{% endif %}" href="{{ url_for('players') }}">Spelare</a>
+            <a class="nav-link {% if request.endpoint == 'methodology' %}active{% endif %}" href="{{ url_for('methodology') }}">Metodik</a>
+        </nav>
+    </header>
+
+    <main>
+        {% include "partials/data_status.html" %}
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="site-footer">
+        <div>
+            <strong>Fantasykollen</strong>
+            <p>Fantasy Allsvenskan tips, värdeindex och beslutsstöd inför varje omgång.</p>
+        </div>
+        <nav aria-label="Sidinformation">
+            <a href="{{ url_for('about') }}">Om</a>
+            <a href="{{ url_for('contact') }}">Kontakt</a>
+            <a href="{{ url_for('privacy') }}">Integritet</a>
+            <a href="{{ url_for('methodology') }}">Metodik</a>
+        </nav>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,86 @@
+{% set rows = table_players if table_players is defined else dashboard.value_picks %}
+{% set compact = table_variant is defined and table_variant == "compact" %}
+<div class="table-wrap">
+    <table class="player-table {% if compact %}compact-table{% else %}full-table{% endif %}">
+        <caption class="sr-only">Fantasy Allsvenskan spelare sorterade efter värdeindex</caption>
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Spelare</th>
+                <th scope="col">Lag</th>
+                <th scope="col">Pos</th>
+                <th scope="col">Pris</th>
+                <th scope="col">Nästa</th>
+                <th scope="col">Form</th>
+                {% if not compact %}
+                <th scope="col">Min</th>
+                <th scope="col">Trend</th>
+                <th scope="col">Poäng/M</th>
+                {% endif %}
+                <th scope="col">Prognos</th>
+                <th scope="col">Index</th>
+                {% if not compact %}
+                <th scope="col">Risk</th>
+                <th scope="col">Ägd</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in rows %}
+            <tr>
+                <td data-label="#">{{ loop.index }}</td>
+                <td data-label="Spelare">
+                    <a class="table-link" href="{{ url_for('player_detail', slug=player.slug) }}">
+                        <strong>{{ player.name }}</strong>
+                    </a>
+                    {% if player.news %}
+                    <small class="news">{{ player.news }}</small>
+                    {% endif %}
+                </td>
+                <td data-label="Lag"><a class="table-link muted-link" href="{{ url_for('team_detail', slug=player.team_slug) }}">{{ player.team }}</a></td>
+                <td data-label="Pos"><span class="badge">{{ player.position }}</span></td>
+                <td data-label="Pris">{{ player.price }}M</td>
+                <td data-label="Nästa">
+                    {% if player.next_fixture %}
+                    <a class="fixture-mini difficulty-{{ player.next_fixture.difficulty.level }}" href="{{ url_for('team_detail', slug=player.next_fixture.opponent_slug) }}">
+                        {{ "vs" if player.next_fixture.venue == "H" else "@" }} {{ player.next_fixture.opponent }}
+                    </a>
+                    {% else %}
+                    <span class="muted">-</span>
+                    {% endif %}
+                </td>
+                <td data-label="Form">{{ player.form }}</td>
+                {% if not compact %}
+                <td data-label="Min">{{ player.minutes }}</td>
+                <td data-label="Trend">
+                    {% if player.form_change is not none %}
+                    <span class="delta {% if player.form_change > 0 %}up{% elif player.form_change < 0 %}down{% endif %}">
+                        {{ "%+g"|format(player.form_change) }}
+                    </span>
+                    {% else %}
+                    <span class="muted">Ny</span>
+                    {% endif %}
+                </td>
+                <td data-label="Poäng/M">{{ player.points_per_million }}</td>
+                {% endif %}
+                <td data-label="Prognos">
+                    {{ player.expected_points }}
+                    <small>{{ player.projection_label }}</small>
+                </td>
+                <td data-label="Index" class="score">
+                    {{ player.value_score }}
+                    <small>{{ player.value_label }}</small>
+                </td>
+                {% if not compact %}
+                <td data-label="Risk">
+                    <span class="risk {% if player.risk_penalty >= 3 %}high{% elif player.risk_penalty > 0 %}medium{% endif %}">
+                        {{ player.risk_penalty }}
+                    </span>
+                </td>
+                <td data-label="Ägd">{{ player.selected_by_percent }}%</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
