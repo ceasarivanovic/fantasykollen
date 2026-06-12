@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Integritetspolicy - Fantasykollen{% endblock %}
+{% block meta_description %}Integritetspolicy för Fantasykollen och information om analytics, cookies och datakällor.{% endblock %}
+{% block canonical %}{{ url_for('privacy', _external=True) }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <p class="eyebrow">Integritet</p>
+    <h1>Integritetspolicy</h1>
+    <p>Fantasykollen ska vara enkel att använda och tydlig med vilken data som används.</p>
+</section>
+
+<section class="method-layout">
+    <article class="panel method-main">
+        <h2>Personuppgifter</h2>
+        <p>Fantasykollen kräver inget konto och samlar inte in personuppgifter i appen som standard.</p>
+        <h2>Analytics</h2>
+        <p>
+            Analytics är avstängt om ingen miljövariabel är satt. Om Plausible eller Google Analytics aktiveras
+            används det för att förstå vilka sidor som används och förbättra tjänsten.
+        </p>
+        <h2>Cookies</h2>
+        <p>Sidan sätter inga egna cookies för inloggning eller medlemskap i nuläget.</p>
+        <h2>Datakällor</h2>
+        <p>Fantasydata hämtas från Fantasy Allsvenskan och används för statistik, rankingar och analyser.</p>
+    </article>
+    <aside class="method-sidebar">
+        <article class="panel">
+            <p class="eyebrow">Status</p>
+            <h2>Lanseringsläge</h2>
+            <p class="side-copy">Uppdatera den här policyn när analytics, annonser eller medlemskap aktiveras.</p>
+        </article>
+    </aside>
+</section>
+{% endblock %}

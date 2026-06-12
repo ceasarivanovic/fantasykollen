@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block title %}Så fungerar Värdeindex - Fantasykollen{% endblock %}
+{% block meta_description %}Läs hur Fantasykollen rankar spelare i Fantasy Allsvenskan med Värdeindex, form, pris, speltid, risk, ägarandel och kommande matcher.{% endblock %}
+{% block canonical %}{{ url_for('methodology', _external=True) }}{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Så fungerar Värdeindex",
+    "author": {
+        "@type": "Organization",
+        "name": "Fantasykollen"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "Fantasykollen"
+    },
+    "inLanguage": "sv-SE"
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "Hur hittar man prisvärda spelare i Fantasy Allsvenskan?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Fantasykollen väger samman form, pris, poäng per miljon, speltid, risk och nästa match för att hitta spelare som ger mycket fantasyvärde för budgeten."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Vad betyder Värdeindex?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Värdeindex är en jämförelsesiffra som visar hur intressant en spelare är utifrån pris, form, produktion, speltid, spelbarhet och risk."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Är prognosen en exakt poängprediktion?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Nej. Prognosen är en enkel jämförelsesiffra inför omgången. Den hjälper dig jämföra spelare, men ska inte ses som en garanti."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Hur används nästa match i prognosen?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Nästa match påverkar prognosen genom matchsvårighet och hemma/borta. En lättare hemmamatch kan ge plus, medan en tuff bortamatch kan ge minus."
+            }
+        }
+    ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<section class="page-header methodology-header">
+    <p class="eyebrow">Metodik</p>
+    <h1>Så fungerar Värdeindex</h1>
+    <p>
+        Värdeindex är Fantasykollens sätt att väga ihop pris, form, speltid och risk till
+        en snabb signal för vilka spelare som är mest intressanta inför nästa omgång.
+    </p>
+</section>
+
+<section class="method-layout">
+    <article class="panel method-main">
+        <h2>Vad indexet försöker svara på</h2>
+        <p>
+            Ett bra fantasyval är sällan bara spelaren med högst totalpoäng. Priset, rollen,
+            minuterna, kommande matcher och risken spelar minst lika stor roll. Värdeindex
+            försöker därför svara på en mer praktisk fråga: hur mycket fantasyvärde får du
+            för budgeten och risken du tar?
+        </p>
+
+        <h2>Signalerna i modellen</h2>
+        <div class="method-list">
+            <div>
+                <h3>Form</h3>
+                <p>Aktuell form väger tungt eftersom fantasybeslut ofta tas inför nästa omgång, inte för hela säsongen.</p>
+            </div>
+            <div>
+                <h3>Poäng per match</h3>
+                <p>Stabil produktion över tid skyddar mot att en spelare rankas högt enbart på en kort formtopp.</p>
+            </div>
+            <div>
+                <h3>Poäng per miljon</h3>
+                <p>Budgeteffektivitet är centralt. Billigare spelare med bra produktion ska kunna konkurrera med dyrare namn.</p>
+            </div>
+            <div>
+                <h3>Speltid</h3>
+                <p>Minuter ger trygghet. Spelare som ofta spelar mycket får högre betyg än osäkra rotationsval.</p>
+            </div>
+            <div>
+                <h3>Spelbarhet och risk</h3>
+                <p>Status, skador, nyheter och låg speltid ger avdrag. En bra spelare är inte ett bra val om risken är för hög.</p>
+            </div>
+            <div>
+                <h3>Marknadssignal</h3>
+                <p>Transfers in och ut används som en svag signal. Den kan fånga spelare som fantasyspelare snabbt rör sig mot.</p>
+            </div>
+            <div>
+                <h3>Poängprognos</h3>
+                <p>Prognosen är en enkel jämförelsesiffra baserad på form, poäng per match, minuter, spelbarhet, risk och nästa match.</p>
+            </div>
+        </div>
+
+        <h2>Vad indexet inte är</h2>
+        <p>
+            Värdeindex är inte en garanti och inte en exakt poängprognos. Det är ett beslutsstöd.
+            Det ska hjälpa dig att hitta kandidater att undersöka närmare, jämföra spelare och
+            upptäcka risker innan deadline.
+        </p>
+
+        <h2>Så översätts siffrorna till vanligt språk</h2>
+        <div class="method-list">
+            <div>
+                <h3>Toppval / Starkt val</h3>
+                <p>Spelaren har stark kombination av pris, form, produktion, speltid och nästa match.</p>
+            </div>
+            <div>
+                <h3>Hög prognos</h3>
+                <p>Spelaren har en stark jämförelsesiffra inför nästa match, men det är inte en garanti.</p>
+            </div>
+            <div>
+                <h3>Trygga minuter</h3>
+                <p>Spelaren har spelat mycket och är därför lättare att lita på än ett rotationsval.</p>
+            </div>
+            <div>
+                <h3>Hög risk</h3>
+                <p>Status, nyheter, skaderisk eller osäker roll gör att spelaren måste kontrolleras extra noga.</p>
+            </div>
+        </div>
+    </article>
+
+    <aside class="method-sidebar">
+        <article class="panel">
+            <p class="eyebrow">Snabbt</p>
+            <h2>Så ska du läsa indexet</h2>
+            <dl class="score-breakdown">
+                <div>
+                    <dt>Högt index</dt>
+                    <dd>Intressant köp eller håll</dd>
+                </div>
+                <div>
+                    <dt>Hög risk</dt>
+                    <dd>Kontrollera nyheter</dd>
+                </div>
+                <div>
+                    <dt>Låg ägarandel</dt>
+                    <dd>Möjlig differential</dd>
+                </div>
+                <div>
+                    <dt>Hög speltid</dt>
+                    <dd>Tryggare minuter</dd>
+                </div>
+            </dl>
+        </article>
+
+        <article class="panel">
+            <p class="eyebrow">Nästa steg</p>
+            <h2>Modellen utvecklas</h2>
+            <p class="side-copy">
+                Nästa större förbättring är mer avancerad matchsvårighet och förväntade poäng.
+                När historik byggs upp kan modellen även jämföra trender vecka för vecka.
+            </p>
+            <a class="button primary full" href="{{ url_for('fantasy') }}">Se aktuella tips</a>
+        </article>
+
+        <article class="panel">
+            <p class="eyebrow">Ligor</p>
+            <h2>Byggt för fler fantasyspel</h2>
+            <div class="league-stack">
+                {% for league in available_leagues %}
+                <div>
+                    <span>{{ league.short_name }}</span>
+                    <small>{{ "Aktiv" if league.status == "active" else "Planerad" }}</small>
+                </div>
+                {% endfor %}
+            </div>
+        </article>
+    </aside>
+</section>
+
+<section class="faq-section">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">FAQ</p>
+            <h2>Vanliga frågor om Fantasy Allsvenskan tips</h2>
+        </div>
+    </div>
+    <div class="faq-grid">
+        <article class="panel">
+            <h3>Hur hittar man prisvärda spelare i Fantasy Allsvenskan?</h3>
+            <p>
+                Leta efter spelare som kombinerar bra form, stabil speltid, låg risk och rimligt pris.
+                Fantasykollen använder Värdeindex för att lyfta spelare som ger mycket fantasyvärde per budgetkrona.
+            </p>
+        </article>
+        <article class="panel">
+            <h3>Vad betyder Värdeindex?</h3>
+            <p>
+                Värdeindex är en jämförelsesiffra för hur intressant en spelare är. Den väger ihop
+                form, poäng per match, poäng per miljon, speltid, spelbarhet, marknadssignal och risk.
+            </p>
+        </article>
+        <article class="panel">
+            <h3>Är prognosen en exakt poängprediktion?</h3>
+            <p>
+                Nej. Prognosen är en enkel jämförelsesiffra inför omgången. Den hjälper dig hitta
+                kandidater och jämföra spelare, men den är inte en garanti för framtida poäng.
+            </p>
+        </article>
+        <article class="panel">
+            <h3>Hur används nästa match i prognosen?</h3>
+            <p>
+                Nästa match påverkar prognosen genom hemma/borta och matchsvårighet. En lättare
+                hemmamatch kan ge plus, medan en tuff bortamatch kan ge minus.
+            </p>
+        </article>
+        <article class="panel">
+            <h3>Vad är budgetfynd?</h3>
+            <p>
+                Budgetfynd är billigare spelare som ändå har starka signaler: form, minuter,
+                poängproduktion eller bra matchläge. De kan frigöra pengar till dyrare nyckelspelare.
+            </p>
+        </article>
+        <article class="panel">
+            <h3>Hur ska man tänka kring kaptensval?</h3>
+            <p>
+                Kaptensval bör ha hög prognos, stark form, låg risk och trygg speltid. Därför är
+                kaptenslistan mer konservativ än listor för budgetfynd och differentials.
+            </p>
+        </article>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Om Fantasykollen - Fantasy Allsvenskan tips{% endblock %}
+{% block meta_description %}Fantasykollen är ett svenskt fantasyfotbollsverktyg för Fantasy Allsvenskan med värdeindex, prognos, speltid och risk.{% endblock %}
+{% block canonical %}{{ url_for('about', _external=True) }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <p class="eyebrow">Om</p>
+    <h1>Om Fantasykollen</h1>
+    <p>Fantasykollen hjälper fantasyspelare fatta bättre beslut inför varje omgång i Fantasy Allsvenskan.</p>
+</section>
+
+<section class="method-layout">
+    <article class="panel method-main">
+        <h2>Varför sidan finns</h2>
+        <p>
+            Målet är att göra fantasybeslut enklare: vilka spelare är prisvärda, vilka har trygg speltid,
+            vilka är intressanta kaptensval och vilka bör kontrolleras före deadline?
+        </p>
+        <h2>Vad Fantasykollen gör</h2>
+        <p>
+            Sidan hämtar offentlig fantasydata och räknar ut jämförelsesignaler som värdeindex,
+            prognos, risk, form och nästa match. Det är beslutsstöd, inte facit.
+        </p>
+        <h2>Datakälla</h2>
+        <p>
+            Fantasykollen bygger på tillgänglig Fantasy Allsvenskan-data. Kontrollera alltid officiella
+            lagnyheter, skador och startelvor innan deadline.
+        </p>
+    </article>
+    <aside class="method-sidebar">
+        <article class="panel">
+            <p class="eyebrow">Transparens</p>
+            <h2>Ingen garanti</h2>
+            <p class="side-copy">Modellen kan hjälpa dig hitta kandidater, men fotboll är osäkert. Använd alltid eget omdöme.</p>
+            <a class="button primary full" href="{{ url_for('methodology') }}">Läs metodiken</a>
+        </article>
+    </aside>
+</section>
+{% endblock %}

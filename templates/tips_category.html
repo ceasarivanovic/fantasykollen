@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}{{ config.title }} - Fantasykollen{% endblock %}
+{% block meta_description %}{{ config.seo }} Fantasykollen analyserar form, pris, speltid, risk, prognos och nästa match.{% endblock %}
+{% block canonical %}{{ url_for('tips_category', category=category, _external=True) }}{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": {{ config.heading|tojson }},
+    "itemListElement": [
+        {% for player in config.players %}
+        {
+            "@type": "ListItem",
+            "position": {{ loop.index }},
+            "name": {{ player.name|tojson }},
+            "url": "{{ url_for('player_detail', slug=player.slug, _external=True) }}"
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "Hur uppdateras listan?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Listan byggs automatiskt från Fantasy Allsvenskans data och Fantasykollens modell för prognos, värdeindex, risk och nästa match."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Ska man välja spelaren direkt?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Nej. Listan är ett beslutsstöd. Kontrollera alltid deadline, startchans, skador och hur spelaren passar ditt lag."
+            }
+        }
+    ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <p class="eyebrow">{{ config.eyebrow }}</p>
+    <h1>{{ config.heading }}</h1>
+    <p>{{ config.description }} Listan uppdateras automatiskt när ny fantasydata hämtas.</p>
+    <div class="meta-strip">
+        <span>{{ data.event.name }}</span>
+        <span>Deadline: {{ data.event.deadline or "Ej publicerad" }}</span>
+        <a href="{{ url_for('gameweek', event_id=data.event.id) }}">Inför omgången</a>
+        <a href="{{ url_for(config.primary_endpoint) }}">{{ config.primary_cta }}</a>
+    </div>
+</section>
+
+<section class="tips-guide" aria-label="Guide till {{ config.heading }}">
+    <div class="tips-guide-copy">
+        <p class="eyebrow">Guide</p>
+        <h2>{{ config.heading }} inför {{ data.event.name }}</h2>
+        <p>{{ config.angle }}</p>
+        <p>
+            Använd listan som beslutsstöd inför deadline. Kontrollera alltid skador, startchans,
+            spelschema och hur spelaren passar din egen trupp innan du gör bytet.
+        </p>
+    </div>
+    <aside class="tips-guide-side">
+        <span>Uppdateras automatiskt</span>
+        <strong>{{ config.players|length }}</strong>
+        <p>Spelare i listan, rankade med aktuell fantasydata.</p>
+    </aside>
+</section>
+
+{% if config.players %}
+<section class="tips-podium" aria-label="Toppval i {{ config.heading }}">
+    {% for player in config.players[:3] %}
+    <a class="tips-podium-card" href="{{ url_for('player_detail', slug=player.slug) }}">
+        <span>#{{ loop.index }} {{ config.eyebrow }}</span>
+        <h2>{{ player.name }}</h2>
+        <p>{{ player.team }} · {{ player.position }} · {{ player.price }}M</p>
+        <b>{{ config.metric_label }} {{ player[config.metric_key] }} · Prognos {{ player.expected_points }}</b>
+    </a>
+    {% endfor %}
+</section>
+{% endif %}
+
+<section class="panel tips-table">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Lista</p>
+            <h2>{{ config.heading }}</h2>
+        </div>
+        <a href="{{ url_for('methodology') }}">Så fungerar modellen</a>
+    </div>
+    <div class="section-copy">
+        <p>
+            Tabellen väger in form, pris, prognos, speltid, risk och nästa match.
+            Klicka på en spelare för mer detaljerad analys och jämförelse med liknande alternativ.
+        </p>
+    </div>
+    {% set table_players = config.players %}
+    {% set table_variant = "compact" %}
+    {% include "partials/player_table.html" %}
+</section>
+
+<section class="seo-intro">
+    <h2>{{ config.heading }} inför nästa omgång</h2>
+    <p>
+        {{ config.seo }} Tabellen väger in form, pris, prognos, speltid, risk och nästa match.
+        Använd listan som startpunkt för egna fantasybeslut, inte som en garanti.
+    </p>
+    <div class="article-link-grid">
+        <a href="{{ url_for('tips_category', category='budgetfynd') }}">Budgetfynd</a>
+        <a href="{{ url_for('tips_category', category='kaptener') }}">Kaptener</a>
+        <a href="{{ url_for('tips_category', category='differentials') }}">Differentials</a>
+        <a href="{{ url_for('gameweek', event_id=data.event.id) }}">Inför omgången</a>
+    </div>
+</section>
+{% endblock %}

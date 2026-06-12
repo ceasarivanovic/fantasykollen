@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Fantasy Allsvenskan spelare, priser och form - Fantasykollen{% endblock %}
+{% block meta_description %}Filtrera spelare i Fantasy Allsvenskan efter lag, position, pris, form, speltid, ägarandel och värdeindex.{% endblock %}
+{% block canonical %}{{ url_for('players', _external=True) }}{% endblock %}
+
+{% block content %}
+<section class="page-header compact">
+    <p class="eyebrow">Databas</p>
+    <h1>Fantasy Allsvenskan spelare</h1>
+    <p>Filtrera fram rätt profil för ditt lag med pris, form, speltid, risk och värdeindex.</p>
+</section>
+
+<section class="article-link-panel panel">
+    <div>
+        <p class="eyebrow">Snabbvägar</p>
+        <h2>Populära Fantasy Allsvenskan-listor</h2>
+        <p>Gå direkt till positioner, budgetspelare och de viktigaste tipslistorna inför omgången.</p>
+    </div>
+    <div class="article-link-grid">
+        <a href="{{ url_for('position_landing', slug='malvakter') }}">Målvakter</a>
+        <a href="{{ url_for('position_landing', slug='backar') }}">Backar</a>
+        <a href="{{ url_for('position_landing', slug='mittfaltare') }}">Mittfältare</a>
+        <a href="{{ url_for('position_landing', slug='anfallare') }}">Anfallare</a>
+        <a href="{{ url_for('price_under_7') }}">Under 7.0M</a>
+        <a href="{{ url_for('tips_category', category='kaptener') }}">Kaptener</a>
+    </div>
+</section>
+
+<form class="filters" method="get" aria-label="Filtrera fantasyspelare">
+    <label>
+        Position
+        <select name="position">
+            <option value="alla">Alla</option>
+            {% for position in positions %}
+            <option value="{{ position }}" {% if filters.position == position %}selected{% endif %}>{{ position }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <label>
+        Lag
+        <select name="team">
+            <option value="alla">Alla</option>
+            {% for team in data.teams %}
+            <option value="{{ team.name }}" {% if filters.team == team.name %}selected{% endif %}>{{ team.name }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <label>
+        Maxpris
+        <input type="number" step="0.1" name="max_price" value="{{ filters.max_price }}" placeholder="7.0">
+    </label>
+    <label>
+        Sortera
+        <select name="sort">
+            <option value="value_score" {% if filters.sort == "value_score" %}selected{% endif %}>Värdeindex</option>
+            <option value="form" {% if filters.sort == "form" %}selected{% endif %}>Form</option>
+            <option value="total_points" {% if filters.sort == "total_points" %}selected{% endif %}>Totalpoäng</option>
+            <option value="points_per_million" {% if filters.sort == "points_per_million" %}selected{% endif %}>Poäng/M</option>
+            <option value="selected_by_percent" {% if filters.sort == "selected_by_percent" %}selected{% endif %}>Ägarandel</option>
+            <option value="minutes_score" {% if filters.sort == "minutes_score" %}selected{% endif %}>Speltid</option>
+            <option value="market_score" {% if filters.sort == "market_score" %}selected{% endif %}>Marknad</option>
+        </select>
+    </label>
+    <button class="button primary" type="submit">Filtrera</button>
+</form>
+
+<section class="quick-guide compact-guide" aria-label="Förklaring av spelartabellen">
+    <div>
+        <span>Index</span>
+        <strong>Värde per krona</strong>
+        <p>Bäst för att hitta prisvärda spelare.</p>
+    </div>
+    <div>
+        <span>Prognos</span>
+        <strong>Nästa match</strong>
+        <p>Jämför förväntad poängnivå inför omgången.</p>
+    </div>
+    <div>
+        <span>Risk</span>
+        <strong>Osäkerhet</strong>
+        <p>Lägre är tryggare inför deadline.</p>
+    </div>
+</section>
+
+<section class="panel" aria-label="Fantasy Allsvenskan spelartabell">
+    <div class="results-bar">
+        <span>Visar {{ pagination.start }}-{{ pagination.end }} av {{ pagination.total_players }} spelare</span>
+        <span>Sida {{ pagination.page }} av {{ pagination.total_pages }}</span>
+    </div>
+    {% set table_players = players %}
+    {% include "partials/player_table.html" %}
+    <nav class="pagination" aria-label="Sidnavigering">
+        {% if pagination.has_prev %}
+        <a class="button secondary dark" href="{{ url_for('players', page=pagination.page - 1, position=filters.position, team=filters.team, max_price=filters.max_price, sort=filters.sort) }}">Föregående</a>
+        {% else %}
+        <span class="button disabled">Föregående</span>
+        {% endif %}
+
+        {% if pagination.has_next %}
+        <a class="button primary" href="{{ url_for('players', page=pagination.page + 1, position=filters.position, team=filters.team, max_price=filters.max_price, sort=filters.sort) }}">Nästa</a>
+        {% else %}
+        <span class="button disabled">Nästa</span>
+        {% endif %}
+    </nav>
+</section>
+{% endblock %}

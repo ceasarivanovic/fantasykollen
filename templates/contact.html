@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Kontakt - Fantasykollen{% endblock %}
+{% block meta_description %}Kontakta Fantasykollen med feedback, frågor eller förslag om Fantasy Allsvenskan tips och spelarstatistik.{% endblock %}
+{% block canonical %}{{ url_for('contact', _external=True) }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <p class="eyebrow">Kontakt</p>
+    <h1>Kontakt</h1>
+    <p>Har du feedback, hittat fel i datan eller vill föreslå en funktion? Hör av dig.</p>
+</section>
+
+<section class="panel">
+    <h2>Feedback och frågor</h2>
+    <p class="side-copy">
+        Lägg in en kontaktadress här när domänen är live, till exempel hej@fantasykollen.se.
+        Fram till dess fungerar sidan som lanseringsklar grund för feedback och vidareutveckling.
+    </p>
+    <div class="article-link-grid">
+        <a href="{{ url_for('methodology') }}">Metodik</a>
+        <a href="{{ url_for('privacy') }}">Integritet</a>
+        <a href="{{ url_for('fantasy') }}">Fantasycenter</a>
+    </div>
+</section>
+{% endblock %}

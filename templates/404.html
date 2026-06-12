@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Sidan hittades inte - Fantasykollen{% endblock %}
+{% block meta_description %}Sidan kunde inte hittas. Gå tillbaka till Fantasykollens analys och hitta tips, spelare och lag.{% endblock %}
+{% block robots %}noindex,follow{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <p class="eyebrow">404</p>
+    <h1>Sidan hittades inte</h1>
+    <p>Den här länken matchar ingen spelare eller något lag i aktuell fantasydata.</p>
+    <div class="hero-actions">
+        <a class="button primary" href="{{ url_for('fantasy') }}">Se veckans värde</a>
+        <a class="button secondary dark" href="{{ url_for('players') }}">Utforska spelare</a>
+    </div>
+</section>
+{% endblock %}

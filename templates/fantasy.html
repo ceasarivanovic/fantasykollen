@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+
+{% block title %}Fantasy Allsvenskan tips och bästa värde - Fantasykollen{% endblock %}
+{% block meta_description %}Se prisvärda spelare, budgetfynd, kaptenskandidater, differentials och riskspelare i Fantasy Allsvenskan baserat på form, pris och speltid.{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Bästa värde i Fantasy Allsvenskan",
+    "itemListElement": [
+        {% for player in dashboard.value_picks[:10] %}
+        {
+            "@type": "ListItem",
+            "position": {{ loop.index }},
+            "name": {{ player.name|tojson }},
+            "description": {{ (player.team ~ " - " ~ player.position ~ " - värdeindex " ~ player.value_score)|tojson }}
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <p class="eyebrow">Fantasycenter</p>
+    <h1>Fantasy Allsvenskan tips och bästa värde</h1>
+    <p>Prisvärda spelare, budgetval, kaptener och lågägda alternativ samlade inför nästa omgång.</p>
+    <div class="meta-strip">
+        <span>{{ data.event.name }}</span>
+        <span>{{ "Live-data" if not data.meta.using_cache else "Cache-data" }}</span>
+        <span>{{ "Historik aktiv" if dashboard.has_history else "Första snapshot sparad" }}</span>
+        <a href="{{ url_for('gameweek', event_id=data.event.id) }}">Inför omgången</a>
+        <a href="{{ url_for('tips_category', category='budgetfynd') }}">Budgetfynd</a>
+        <a href="{{ url_for('tips_category', category='kaptener') }}">Kaptener</a>
+        <a href="{{ url_for('tips_category', category='differentials') }}">Differentials</a>
+    </div>
+</section>
+
+<section class="quick-guide" aria-label="Så läser du Fantasykollens listor">
+    <div>
+        <span>Värdeindex</span>
+        <strong>Prisvärde just nu</strong>
+        <p>Högre siffra betyder att spelaren ser stark ut i relation till pris, form, speltid och risk.</p>
+    </div>
+    <div>
+        <span>Prognos</span>
+        <strong>Förväntade poäng</strong>
+        <p>En jämförelsesiffra inför nästa match, inte ett exakt facit.</p>
+    </div>
+    <div>
+        <span>Differential</span>
+        <strong>Lågägt alternativ</strong>
+        <p>Spelare som kan ge fördel om de levererar innan många andra köper.</p>
+    </div>
+    <div>
+        <span>Risk</span>
+        <strong>Kontrollera före deadline</strong>
+        <p>Skador, avstängningar, osäker speltid och annan status vägs in.</p>
+    </div>
+</section>
+
+<section class="fantasy-spotlight">
+    <article class="panel">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Värde</p>
+                <h2>Spelare med bäst värdeindex</h2>
+            </div>
+            <a href="{{ url_for('players') }}">Filtrera spelare</a>
+        </div>
+        <div class="section-copy">
+            <p>
+                Här hittar du spelare där pris, form, speltid, risk och nästa match ger bäst samlad signal.
+                Använd listan för att hitta köp att undersöka vidare, inte som ett facit.
+            </p>
+        </div>
+        {% set table_players = dashboard.value_picks %}
+        {% set table_variant = "compact" %}
+        {% include "partials/player_table.html" %}
+    </article>
+
+    <aside class="panel">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Prognos</p>
+                <h2>Högst förväntade poäng</h2>
+            </div>
+        </div>
+        <div class="section-copy compact-copy">
+            <p>Mer relevant för kaptensval och kortsiktiga byten än för långsiktigt lagbygge.</p>
+        </div>
+        <div class="stack-list">
+            {% for player in dashboard.projection_picks[:6] %}
+            <a class="stack-item" href="{{ url_for('player_detail', slug=player.slug) }}">
+                <span>
+                    <strong>{{ player.name }}</strong>
+                    <small>{{ player.team }} · {{ player.position }} · {{ player.projection_label }}</small>
+                </span>
+                <b><small>Prognos</small>{{ player.expected_points }}</b>
+            </a>
+            {% endfor %}
+        </div>
+    </aside>
+</section>
+
+<section class="fantasy-card-grid" aria-label="Fantasy Allsvenskan analyslistor">
+    <article class="panel">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Under 7.0M</p>
+                <h2>Budgetfynd</h2>
+            </div>
+            <a href="{{ url_for('tips_category', category='budgetfynd') }}">Visa alla</a>
+        </div>
+        <div class="section-copy compact-copy">
+            <p>Billigare spelare som kan frigöra pengar utan att tappa för mycket prognos.</p>
+        </div>
+        <div class="stack-list">
+            {% for player in dashboard.budget_picks[:6] %}
+            <a class="stack-item" href="{{ url_for('player_detail', slug=player.slug) }}">
+                <span>
+                    <strong>{{ player.name }}</strong>
+                    <small>{{ player.price }}M · {{ player.team }}</small>
+                </span>
+                <b><small>{{ player.value_label }}</small>{{ player.value_score }}</b>
+            </a>
+            {% endfor %}
+        </div>
+    </article>
+
+    <article class="panel">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Låg ägarandel</p>
+                <h2>Differentials</h2>
+            </div>
+            <a href="{{ url_for('tips_category', category='differentials') }}">Visa alla</a>
+        </div>
+        <div class="section-copy compact-copy">
+            <p>Lågägda spelare med uppsida för dig som vill jaga placering.</p>
+        </div>
+        <div class="stack-list">
+            {% for player in dashboard.differentials[:6] %}
+            <a class="stack-item" href="{{ url_for('player_detail', slug=player.slug) }}">
+                <span>
+                    <strong>{{ player.name }}</strong>
+                    <small>{{ player.selected_by_percent }}% ägd · {{ player.team }}</small>
+                </span>
+                <b><small>Diff</small>{{ player.differential_score }}</b>
+            </a>
+            {% endfor %}
+        </div>
+    </article>
+
+    <article class="panel">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Formkurva</p>
+                <h2>Största lyften</h2>
+            </div>
+        </div>
+        <div class="section-copy compact-copy">
+            <p>Spelare som rör sig uppåt när ny snapshot-data finns att jämföra mot.</p>
+        </div>
+        <div class="stack-list">
+            {% for player in dashboard.form_risers[:6] %}
+            <a class="stack-item" href="{{ url_for('player_detail', slug=player.slug) }}">
+                <span>
+                    <strong>{{ player.name }}</strong>
+                    <small>{{ player.team }} · form {{ player.form }}</small>
+                </span>
+                <b><small>Form</small>+{{ player.form_change }}</b>
+            </a>
+            {% else %}
+            <div class="empty-state">
+                <strong>Väntar på jämförelsedata</strong>
+                <span>När nästa snapshot finns visas formlyft här.</span>
+            </div>
+            {% endfor %}
+        </div>
+    </article>
+
+    <article class="panel" id="risk">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Risk</p>
+                <h2>Status & nyheter</h2>
+            </div>
+        </div>
+        <div class="section-copy compact-copy">
+            <p>Kontrollera skador, avstängningar och osäker roll innan du gör bytet.</p>
+        </div>
+        <div class="stack-list">
+            {% for player in dashboard.flagged_players[:6] %}
+            <a class="stack-item" href="{{ url_for('player_detail', slug=player.slug) }}">
+                <span>
+                    <strong>{{ player.name }}</strong>
+                    <small>{{ player.news or player.risk_label }}</small>
+                </span>
+                <b><small>Risk</small>{{ player.risk_label }}</b>
+            </a>
+            {% else %}
+            <div class="empty-state">
+                <strong>Inga tydliga varningar</strong>
+                <span>API:t rapporterar inga spelarnyheter just nu.</span>
+            </div>
+            {% endfor %}
+        </div>
+    </article>
+</section>
+
+<section class="panel fantasy-fixtures">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Matcher</p>
+            <h2>Kommande omgångar att väga in</h2>
+        </div>
+        <a href="{{ url_for('allsvenskan') }}">Ligaöversikt</a>
+    </div>
+    <div class="section-copy">
+        <p>
+            Matcherna påverkar prognosen, men ska alltid kombineras med speltid, form och risk.
+            En trygg startspelare i svår match kan vara bättre än ett osäkert val i en enklare match.
+        </p>
+    </div>
+    <div class="fixture-list">
+        {% for fixture in dashboard.upcoming_fixtures[:8] %}
+        <div class="fixture-row">
+            <a href="{{ url_for('team_detail', slug=fixture.home_slug) }}">{{ fixture.home_team }}</a>
+            <span class="fixture-vs">vs</span>
+            <a href="{{ url_for('team_detail', slug=fixture.away_slug) }}">{{ fixture.away_team }}</a>
+            <span class="fixture-pill difficulty-{{ fixture.home_difficulty.level }}">{{ fixture.home_difficulty.label }} hemma</span>
+            <span class="fixture-pill difficulty-{{ fixture.away_difficulty.level }}">{{ fixture.away_difficulty.label }} borta</span>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

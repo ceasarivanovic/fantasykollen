@@ -1,0 +1,7 @@
+{% if data is defined and data.meta is defined %}
+<div class="data-status" aria-label="Datastatus">
+    <span>{{ "Live-data" if not data.meta.using_cache else "Cache-data" }}</span>
+    <span>Uppdaterad {{ data.meta.fetched_at|friendly_datetime }}</span>
+    <span>{{ data.event.name }}</span>
+</div>
+{% endif %}
